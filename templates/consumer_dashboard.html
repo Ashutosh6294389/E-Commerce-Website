@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Dashboard</h2>
+        <ul>
+            <li><a href="#" onclick="showSection('profile-section')">Profile</a></li>
+            <li><a href="#" onclick="showSection('edit-profile-section')">Edit Profile</a></li>
+            <li><a href="#" onclick="showSection('orders-section')">Your Orders</a></li>
+            <li><a href="#" onclick="showSection('status-section')">Order Status</a></li>
+            <li><a href="#" onclick="showSection('cart-section')">Cart Items</a></li>
+            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Profile Section -->
+        <div id="profile-section" class="section">
+            <h1>Your Profile</h1>
+            <div class="profile-card">
+                <img src="{{ url_for('static', filename=user.photo) if user.photo else url_for('static', filename='images/default-profile.jpg') }}" alt="Profile Photo">
+                <div class="profile-info">
+                    <p><strong>Name:</strong> {{ user.username }}</p>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Edit Profile Section -->
+        <div id="edit-profile-section" class="section" style="display: none;">
+            <h2>Edit Profile</h2>
+            <form action="{{ url_for('edit_profile') }}" method="POST" enctype="multipart/form-data">
+                <label for="username">Name:</label>
+                <input type="text" id="username" name="username" value="{{ user.username }}" required>
+                
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="{{ user.email }}" required>
+                
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Leave blank to keep current password">
+                
+                <label for="photo">Profile Photo:</label>
+                <input type="file" id="photo" name="photo" accept="image/*">
+                
+                <button type="submit" class="btn">Save Changes</button>
+            </form>
+        </div>
+
+        <!-- Orders Section -->
+        <div id="orders-section" class="section" style="display: none;">
+            <h2>Your Orders</h2>
+            {% if orders %}
+                {% for order in orders %}
+                <div class="order beautiful-order-card">
+                    <h3>Order #{{ order.id }}</h3>
+                    <p><strong>Date:</strong> {{ order.date.strftime('%Y-%m-%d %H:%M') }}</p>
+                    <p><strong>Delivery Address:</strong> {{ order.address }}</p>
+                    <p><strong>Payment Method:</strong> {{ order.payment_method }}</p>
+                    <p><strong>Status:</strong> <span class="order-status {{ order.status|lower }}">{{ order.status }}</span></p>
+                    <table style="width:100%;margin-top:1rem;">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.items %}
+                            <tr>
+                                <td>
+                                    <img src="{{ url_for('static', filename=item.image) }}" style="width:40px;height:40px;border-radius:5px;">
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('product', product_id=item.product_id) }}" class="product-link">
+                                        {{ item.name }}
+                                    </a>
+                                </td>
+                                <td>{{ item.name }}</td>
+                                <td>${{ item.price }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>${{ '%.2f' % (item.price * item.quantity) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <p style="margin-top:1rem;"><strong>Order Total:</strong> ${{ order.total }}</p>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>You have not placed any orders yet.</p>
+            {% endif %}
+        </div>
+
+        <!-- Order Status Section -->
+        <div id="status-section" class="section" style="display: none;">
+            <h2>Order Status</h2>
+            {% for order in orders %}
+                <div class="order-status-card" style="margin-bottom:1.5rem; padding:1rem; background:#fff; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.07);">
+                    <h3>Order #{{ order.id }}</h3>
+                    <table style="width:100%;margin-top:1rem;">
+                        <thead>
+                            <tr>
+                                <th style="text-align:left;">Product</th>
+                                <th style="text-align:left;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in order.items %}
+                        <tr>
+                            <td style="display:flex;align-items:center;gap:1rem;">
+                                <img src="{{ url_for('static', filename=item.image) }}" alt="{{ item.name }}" style="width:40px;height:40px;border-radius:5px;object-fit:cover;">
+                                <div>
+                                    <div>
+                                        <a href="{{ url_for('product', product_id=item.product_id) }}" class="product-link">
+                                            <strong>{{ item.name }}</strong>
+                                        </a>
+                                    </div>
+                                    {% if item.description %}
+                                    <div style="font-size:0.9em;color:#666;">{{ item.description }}</div>
+                                    {% endif %}
+                                    <div style="font-size:0.9em;color:#888;">Qty: {{ item.quantity }}</div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="order-status {{ (item.status or order.status)|lower }}">
+                                    {{ item.status or order.status }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Cart Section -->
+       <div id="cart-section" class="section" style="display: none;">
+            <h2>Your Cart</h2>
+            {% if cart_items %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart_items %}
+                    <tr>
+                        <td>
+                            <img src="{{ url_for('static', filename=item.image) }}" alt="{{ item.name }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                        </td>
+                        <td>
+                            <a href="{{ url_for('product', product_id=item.id) }}" class="product-link">{{ item.name }}</a>
+                        </td>
+                        <td>${{ item.price }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>${{ item.price * item.quantity }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>Your cart is empty.</p>
+            {% endif %}
+        </div>
+
+<<script>
+    function showSection(sectionId) {
+        // Hide all sections
+        const sections = document.querySelectorAll('.section');
+        sections.forEach(section => section.style.display = 'none');
+
+        // Show the selected section
+        document.getElementById(sectionId).style.display = 'block';
+    }
+
+    // Show only the profile section by default
+    document.addEventListener('DOMContentLoaded', () => {
+        showSection('profile-section');
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Your Cart</h1>
+<div class="cart-container">
+    {% if session.get('cart') %}
+    <table>
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in session.cart %}
+            <tr>
+                <td>
+                    <img src="{{ url_for('static', filename=item.image) }}" alt="{{ item.name }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                </td>
+                <td>
+                    <a href="{{ url_for('product', product_id=item.id) }}" class="product-link">{{ item.name }}</a>
+                </td>
+                <td>${{ item.price }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>${{ item.price * item.quantity }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('remove_from_cart', product_id=item.id) }}">
+                        <button type="submit" class="btn danger">Remove</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p><strong>Total:</strong> ${{ total }}</p>
+    <a href="{{ url_for('payment') }}" class="btn">Proceed to Checkout</a>
+    {% else %}
+    <p>Your cart is empty.</p>
+    {% endif %}
+</div>
+{% endblock %}

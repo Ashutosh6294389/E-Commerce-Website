@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Welcome to E-Shop</h1>
+<div class="products-grid">
+    {% for product in products %}
+    <a href="{{ url_for('product', product_id=product.id) }}" class="product-card">
+        <div class="product-image">
+            <img src="{{ url_for('static', filename=product.images.split(',')[0]) if product.images else url_for('static', filename='images/default-product.jpg') }}" alt="{{ product.name }}">
+        </div>
+        <div class="product-info">
+            <h2 class="product-name">{{ product.name }}</h2>
+            <p class="product-price">${{ product.price }}</p>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}

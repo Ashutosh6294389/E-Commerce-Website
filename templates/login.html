@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="login-container">
+    <h1>Sign-In</h1>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="flash-messages">
+        {% for message in messages %}
+        <p class="error">{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+    <form method="POST">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+        <button type="submit" class="btn">Sign-In</button>
+    </form>
+    <p class="register-link">New to E-Shop? <a href="{{ url_for('register_choice') }}">Create your account</a></p>
+</div>
+{% endblock %}

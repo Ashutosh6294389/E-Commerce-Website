@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Register</h1>
+<div class="register-options">
+    <a href="{{ url_for('register', role='seller') }}" class="btn">Register as Seller</a>
+    <a href="{{ url_for('register', role='consumer') }}" class="btn">Register as Consumer</a>
+</div>
+{% endblock %}

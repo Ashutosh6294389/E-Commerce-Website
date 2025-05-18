@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="payment-container">
+    <h1>Checkout & Payment</h1>
+
+    {% if buy_now %}
+        <div class="checkout-product" style="margin-bottom:1.5rem; padding:1rem; background:#fafafa; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.04);">
+            <div style="display:flex;align-items:center;gap:1rem;">
+                <img src="{{ url_for('static', filename=product.images.split(',')[0] if product.images else 'images/default-product.jpg') }}" alt="{{ product.name }}" style="width:80px;height:80px;border-radius:5px;object-fit:cover;">
+                <div>
+                    <h3 style="margin:0;">{{ product.name }}</h3>
+                    <div style="color:#888;">Price: ${{ product.price }}</div>
+                    <div style="color:#888;">Quantity: {{ quantity }}</div>
+                    <div style="color:#232f3e;font-weight:bold;">Total: ${{ '%.2f' % (product.price * quantity) }}</div>
+                </div>
+            </div>
+        </div>
+    {% elif cart_items %}
+        <div class="checkout-cart" style="margin-bottom:1.5rem;">
+            <h3>Your Cart</h3>
+            {% for item in cart_items %}
+            <div style="margin-bottom:1rem; padding:1rem; background:#fafafa; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.04); display:flex;align-items:center;gap:1rem;">
+                <img src="{{ url_for('static', filename=item.image) }}" alt="{{ item.name }}" style="width:80px;height:80px;border-radius:5px;object-fit:cover;">
+                <div>
+                    <h3 style="margin:0;">{{ item.name }}</h3>
+                    <div style="color:#888;">Price: ${{ item.price }}</div>
+                    <div style="color:#888;">Quantity: {{ item.quantity }}</div>
+                    <div style="color:#232f3e;font-weight:bold;">Total: ${{ '%.2f' % (item.price * item.quantity) }}</div>
+                </div>
+            </div>
+            {% endfor %}
+             <div style="margin-top:1rem;font-weight:bold;">
+                Cart Total: ${{ '%.2f' % cart_total }}
+            </div>
+        </div>
+    {% endif %}
+
+    <form method="POST">
+        <label for="address">Delivery Address:</label>
+        <textarea id="address" name="address" required placeholder="Enter your delivery address"></textarea>
+        <label for="payment_method">Payment Method:</label>
+        <select id="payment_method" name="payment_method" required>
+            <option value="Credit Card">Credit Card</option>
+            <option value="UPI">UPI</option>
+            <option value="Cash on Delivery">Cash on Delivery</option>
+        </select>
+        {% if buy_now %}
+            <input type="hidden" name="quantity" value="{{ quantity }}">
+        {% endif %}
+        <button type="submit" class="btn">Place Order</button>
+    </form>
+</div>
+{% endblock %}

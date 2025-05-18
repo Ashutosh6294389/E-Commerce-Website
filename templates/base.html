@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>E-Commerce</title>
+</head>
+<body>
+    <header>
+    <div class="logo"><span style="color:#f0c14b;">E-Commerce</span> <span style="color:#232f3e;">Shop</span></div>
+    <form id="search-form" action="{{ url_for('search') }}" method="GET" class="search-bar">
+        <input type="text" name="query" placeholder="Search for products..." required>
+        <nav class="search-suggestions">
+            {% for suggestion in search_suggestions %}
+            <a href="{{ url_for('product', product_id=suggestion.id) }}">{{ suggestion.name }}</a>
+            {% endfor %}
+        </nav>
+    </form>
+    <nav>
+        <button type="submit" form="search-form" class="search-button">
+            <i class="fas fa-search"></i>
+        </button>
+    </nav>
+    <nav>
+        <a href="{{ url_for('index') }}"><i class="fas fa-home"></i></a>
+        <a href="{{ url_for('cart') }}"><i class="fas fa-shopping-cart"></i></a>
+        {% if 'user_id' in session %}
+        <a href="#" onclick="redirectToDashboard()"><i class="fas fa-user"></i></a>
+        <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i></a>
+        {% else %}
+        <a href="{{ url_for('login') }}"><i class="fas fa-sign-in-alt"></i></a>
+        {% endif %}
+    </nav>
+</header>
+
+<script>
+    function redirectToDashboard() {
+        const role = "{{ session.get('role') }}";
+        if (role === 'seller') {
+            window.location.href = "{{ url_for('seller_dashboard') }}";
+        } else if (role === 'consumer') {
+            window.location.href = "{{ url_for('consumer_dashboard') }}";
+        }
+    }
+</script>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <p>&copy; 2025 E-Shop. All rights reserved.</p>
+    </footer>
+</body>
+</html>

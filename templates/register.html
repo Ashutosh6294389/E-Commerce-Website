@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="register-container">
+    <h1>Create Account</h1>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="flash-messages">
+        {% for message in messages %}
+        <p class="error">{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+    <form method="POST">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" placeholder="Enter your username" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+        <button type="submit" class="btn">Create Account</button>
+    </form>
+    <p class="login-link">Already have an account? <a href="{{ url_for('login') }}">Sign-In</a></p>
+</div>
+{% endblock %}
