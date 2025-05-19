@@ -7,7 +7,11 @@
 </head>
 <body>
     <header>
-    <div class="logo"><span style="color:#f0c14b;">E-Commerce</span> <span style="color:#232f3e;">Shop</span></div>
+    <div class="logo"><span style="color:#f0c14b;">E-Commerce</span> <span style="color:#232f3e;"></span></div>
+    <!-- Add this after your logo div in the header -->
+    <button id="dark-mode-toggle" title="Toggle dark mode" style="background:none;border:none;cursor:pointer;color:inherit;font-size:1.5rem;">
+        <i id="dark-mode-icon" class="fas fa-moon"></i>
+    </button>
     <form id="search-form" action="{{ url_for('search') }}" method="GET" class="search-bar">
         <input type="text" name="query" placeholder="Search for products..." required>
         <nav class="search-suggestions">
@@ -42,6 +46,22 @@
             window.location.href = "{{ url_for('consumer_dashboard') }}";
         }
     }
+</script>
+<script>
+    // Dark mode toggle logic
+    const toggleBtn = document.getElementById('dark-mode-toggle');
+    const icon = document.getElementById('dark-mode-icon');
+    function setDarkMode(on) {
+        document.body.classList.toggle('dark-mode', on);
+        icon.className = on ? 'fas fa-sun' : 'fas fa-moon';
+        localStorage.setItem('darkMode', on ? '1' : '0');
+    }
+    // On load, set mode from localStorage
+    document.addEventListener('DOMContentLoaded', function() {
+        const dark = localStorage.getItem('darkMode') === '1';
+        setDarkMode(dark);
+        toggleBtn.addEventListener('click', () => setDarkMode(!document.body.classList.contains('dark-mode')));
+    });
 </script>
     <main>
         {% block content %}{% endblock %}

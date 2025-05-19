@@ -877,3 +877,264 @@ nav a i {
   font-size: 1.7rem; /* Adjust size as needed */
   vertical-align: middle;
 }
+
+/* Dark Mode Styles */
+body.dark-mode {
+    background-color: #181a1b;
+    color: #e0e0e0;
+}
+
+body.dark-mode header,
+body.dark-mode footer {
+    background-color: #181a1b;
+    color: #e0e0e0;
+}
+
+body.dark-mode .logo span {
+    color: #f0c14b !important;
+}
+
+body.dark-mode .product,
+body.dark-mode .product-card,
+body.dark-mode .main-content,
+body.dark-mode .register-container,
+body.dark-mode .login-container,
+body.dark-mode .edit-profile-container,
+body.dark-mode .dashboard-container,
+body.dark-mode .sidebar,
+body.dark-mode .product-details-container {
+    background-color: #23272b;
+    color: #e0e0e0;
+    border-color: #333;
+}
+
+body.dark-mode .sidebar {
+    background-color: #23272b;
+}
+
+body.dark-mode .btn,
+body.dark-mode .btn.buy-now,
+body.dark-mode .btn.view-details {
+    background-color: #333;
+    color: #f0c14b;
+    border-color: #444;
+}
+
+body.dark-mode .btn:hover,
+body.dark-mode .btn.buy-now:hover,
+body.dark-mode .btn.view-details:hover {
+    background-color: #444;
+}
+
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+    background-color: #23272b;
+    color: #e0e0e0;
+    border-color: #444;
+}
+
+body.dark-mode .search-bar {
+    background: #23272b;
+    color: #e0e0e0;
+}
+
+body.dark-mode .search-bar input[type="text"] {
+    background: #23272b;
+    color: #e0e0e0;
+}
+
+body.dark-mode .search-bar .search-button {
+    background: #444;
+    color: #f0c14b;
+}
+
+body.dark-mode .search-bar .search-button:hover {
+    background: #555;
+}
+
+body.dark-mode .product-card,
+body.dark-mode .product {
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+
+body.dark-mode .flash-messages {
+    color: #ffb347;
+}
+
+body.dark-mode .order-status {
+    background: #23272b !important;
+    color: #f0c14b !important;
+}
+body.dark-mode .product-card h2,
+body.dark-mode .product-name,
+body.dark-mode .product-title {
+    color: #f0c14b !important; /* or #fff for white */
+}
+
+/* Universal dark mode fixes for all major elements */
+body.dark-mode,
+body.dark-mode .main-content,
+body.dark-mode .products,
+body.dark-mode .products-grid,
+body.dark-mode .product-details-container,
+body.dark-mode .add-product,
+body.dark-mode .register-container,
+body.dark-mode .login-container,
+body.dark-mode .edit-profile-container,
+body.dark-mode .dashboard-container,
+body.dark-mode .sidebar,
+body.dark-mode .product-card,
+body.dark-mode .product,
+body.dark-mode .search-results-grid .product-card,
+body.dark-mode .beautiful-order-card,
+body.dark-mode form,
+body.dark-mode .profile,
+body.dark-mode .your-orders {
+    background-color: #23272b !important;
+    color: #e0e0e0 !important;
+    border-color: #333 !important;
+}
+
+/* Headings and strong text */
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6,
+body.dark-mode .product-title,
+body.dark-mode .product-card h2,
+body.dark-mode .product-name,
+body.dark-mode .sidebar h2,
+body.dark-mode .profile-info strong,
+body.dark-mode label {
+    color: #f0c14b !important;
+}
+
+/* Paragraphs and normal text */
+body.dark-mode p,
+body.dark-mode .product p,
+body.dark-mode .product-description,
+body.dark-mode .product-category,
+body.dark-mode .product-info p,
+body.dark-mode .product-price,
+body.dark-mode .search-results-grid .product-card .product-price,
+body.dark-mode .search-results-grid .product-card .product-name,
+body.dark-mode .profile-info p,
+body.dark-mode .login-container .register-link,
+body.dark-mode .register-container .login-link {
+    color: #e0e0e0 !important;
+}
+
+/* Inputs, selects, textareas */
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select,
+body.dark-mode .search-bar input[type="text"] {
+    background-color: #23272b !important;
+    color: #e0e0e0 !important;
+    border-color: #444 !important;
+}
+
+/* Buttons */
+body.dark-mode button,
+body.dark-mode .btn,
+body.dark-mode .btn.buy-now,
+body.dark-mode .btn.view-details,
+body.dark-mode .search-bar .search-button,
+body.dark-mode .login-container button,
+body.dark-mode .register-container button,
+body.dark-mode form button {
+    background-color: #444 !important;
+    color: #f0c14b !important;
+    border-color: #666 !important;
+}
+
+body.dark-mode button:hover,
+body.dark-mode .btn:hover,
+body.dark-mode .btn.buy-now:hover,
+body.dark-mode .btn.view-details:hover,
+body.dark-mode .search-bar .search-button:hover,
+body.dark-mode .login-container button:hover,
+body.dark-mode .register-container button:hover,
+body.dark-mode form button:hover {
+    background-color: #555 !important;
+    color: #fff !important;
+}
+
+/* Links */
+body.dark-mode a,
+body.dark-mode nav a,
+body.dark-mode .sidebar ul li a,
+body.dark-mode .login-container .register-link a,
+body.dark-mode .register-container .login-link a {
+    color: #f0c14b !important;
+}
+
+body.dark-mode a:hover,
+body.dark-mode nav a:hover,
+body.dark-mode .sidebar ul li a:hover,
+body.dark-mode .login-container .register-link a:hover,
+body.dark-mode .register-container .login-link a:hover {
+    color: #fff !important;
+    background: #444 !important;
+}
+
+/* Sidebar */
+body.dark-mode .sidebar {
+    background-color: #23272b !important;
+    color: #e0e0e0 !important;
+}
+
+/* Footer and header */
+body.dark-mode header,
+body.dark-mode footer {
+    background-color: #181a1b !important;
+    color: #e0e0e0 !important;
+}
+
+/* Flash messages */
+body.dark-mode .flash-messages {
+    color: #ffb3 !important;
+}
+
+/* Order Status Badges in Dark Mode */
+body.dark-mode .order-status {
+    background: linear-gradient(135deg, #3a3f5c 60%, #6a3093 100%) !important;
+    color: #f0c14b !important;
+    border: 1px solid #6a3093 !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.4) !important;
+}
+
+body.dark-mode .your-orders,
+body.dark-mode .order-details,
+body.dark-mode .beautiful-order-card {
+    background: linear-gradient(135deg, #23272b 60%, #181a1b 100%) !important;
+    color: #e0e0e0 !important;
+    border: 1px solid #333 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5) !important;
+}
+
+body.dark-mode .order-details h2,
+body.dark-mode .order-details h3,
+body.dark-mode .order-details label,
+body.dark-mode .beautiful-order-card h2,
+body.dark-mode .beautiful-order-card h3 {
+    color: #f0c14b !important;
+}
+
+body.dark-mode .order-details p,
+body.dark-mode .order-details span,
+body.dark-mode .beautiful-order-card p,
+body.dark-mode .beautiful-order-card span {
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .order-status-card {
+    background: linear-gradient(135deg, #23272b 60%, #181a1b 100%) !important;
+    color: #e0e0e0 !important;
+    border: 1px solid #333 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5) !important;
+}
+

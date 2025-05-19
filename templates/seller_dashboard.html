@@ -62,19 +62,48 @@
         <!-- Product List Section -->
         <div id="product-list-section" class="section" style="display: none;">
             <h2>Your Products</h2>
-            {% for product in products %}
-            <div class="product">
-                <h3>{{ product.name }}</h3>
-                <p>{{ product.description }}</p>
-                <p><strong>Price:</strong> ${{ product.price }}</p>
-                <form method="POST" action="{{ url_for('remove_product', product_id=product.id) }}">
-                    <button type="submit" class="btn danger">Remove Product</button>
-                </form>
+            <div class="products-grid">
+                {% for product in products %}
+                <div class="product-card">
+                    <a href="{{ url_for('product', product_id=product.id) }}" style="text-decoration:none;color:inherit;">
+                        <div class="product-image" style="cursor:pointer;">
+                            <img src="{{ url_for('static', filename=product.images.split(',')[0]) if product.images else url_for('static', filename='images/default-product.jpg') }}" alt="{{ product.name }}" style="max-width:150px;">
+                        </div>
+                        <h3 class="product-name">{{ product.name }}</h3>
+                    </a>
+                    <form method="POST" action="{{ url_for('remove_product', product_id=product.id) }}">
+                        <button type="submit" class="btn danger">Remove Product</button>
+                    </form>
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
-    </div>
-</div>
+
+<script>
+    function showSection(sectionId) {
+        // Hide all sections
+        const sections = document.querySelectorAll('.section');
+        sections.forEach(section => section.style.display = 'none');
+
+        // Show the selected section
+        document.getElementById(sectionId).style.display = 'block';
+    }
+
+    // Show only the profile section by default
+    document.addEventListener('DOMContentLoaded', () => {
+        showSection('profile-section');
+    });
+
+    // Toggle product description on image click
+    function toggleDescription(id) {
+        var desc = document.getElementById('desc-' + id);
+        if (desc.style.display === 'none') {
+            desc.style.display = 'block';
+        } else {
+            desc.style.display = 'none';
+        }
+    }
+</script>
 
 <script>
     function showSection(sectionId) {
