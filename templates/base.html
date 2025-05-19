@@ -9,23 +9,14 @@
     <header>
     <div class="logo"><span style="color:#f0c14b;">E-Commerce</span> <span style="color:#232f3e;"></span></div>
     <!-- Add this after your logo div in the header -->
-    <button id="dark-mode-toggle" title="Toggle dark mode" style="background:none;border:none;cursor:pointer;color:inherit;font-size:1.5rem;">
-        <i id="dark-mode-icon" class="fas fa-moon"></i>
-    </button>
-    <form id="search-form" action="{{ url_for('search') }}" method="GET" class="search-bar">
-        <input type="text" name="query" placeholder="Search for products..." required>
-        <nav class="search-suggestions">
-            {% for suggestion in search_suggestions %}
-            <a href="{{ url_for('product', product_id=suggestion.id) }}">{{ suggestion.name }}</a>
-            {% endfor %}
-        </nav>
-    </form>
+    <div class="main-global-search-bar">
+        <input type="text" id="main-global-search" class="admin-search-input" placeholder="Search  products...">
+        <button class="btn" onclick="mainGlobalSearch()"><i class="fas fa-search"></i> Search</button>
+    </div>
     <nav>
-        <button type="submit" form="search-form" class="search-button">
-            <i class="fas fa-search"></i>
-        </button>
-    </nav>
-    <nav>
+        <button id="dark-mode-toggle" title="Toggle dark mode" style="background:none;border:none;cursor:pointer;color:inherit;font-size:1.5rem;">
+           <i id="dark-mode-icon" class="fas fa-moon"></i>
+       </button>
         <a href="{{ url_for('index') }}"><i class="fas fa-home"></i></a>
         <a href="{{ url_for('cart') }}"><i class="fas fa-shopping-cart"></i></a>
         {% if 'user_id' in session %}
@@ -40,7 +31,9 @@
 <script>
     function redirectToDashboard() {
         const role = "{{ session.get('role') }}";
-        if (role === 'seller') {
+        if (role === 'admin') {
+            window.location.href = "{{ url_for('admin_panel') }}";
+        } else if (role === 'seller') {
             window.location.href = "{{ url_for('seller_dashboard') }}";
         } else if (role === 'consumer') {
             window.location.href = "{{ url_for('consumer_dashboard') }}";
@@ -71,3 +64,52 @@
     </footer>
 </body>
 </html>
+<style>
+    .main-global-search-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem auto 1.5rem auto;
+    width: 100%;
+    max-width: 700px;
+}
+
+.main-global-search-bar .admin-search-input {
+    width: 450px;
+    max-width: 90vw;
+    padding: 0.9rem 1.5rem;
+    font-size: 1.25rem;
+    border-radius: 8px;
+    border: 1.5px solid #bbb;
+    background: #fff;
+}
+
+.main-global-search-bar .btn {
+    font-size: 1.15rem;
+    padding: 0.8rem 2.2rem;
+    border-radius: 8px;
+}
+
+body.dark-mode .main-global-search-bar .admin-search-input {
+    background: #23272b;
+    color: #f0c14b;
+    border-color: #444;
+}
+</style>
+<script>
+function mainGlobalSearch() {
+    const query = document.getElementById('main-global-search').value.trim();
+    if (query) {
+        // Redirect to /search?query=...
+        window.location.href = "{{ url_for('search') }}?query=" + encodeURIComponent(query);
+    }
+}
+// Allow pressing Enter to trigger search
+document.getElementById('main-global-search').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        mainGlobalSearch();
+    }
+});
+</script>

@@ -14,6 +14,15 @@ Spargen is a full-featured e-commerce web application built with Flask. It allow
 
 ## User Roles
 
+### Admin
+- Access the admin dashboard
+- View platform analytics (total sales, users, products, orders)
+- View and manage all users (deactivate accounts)
+- View and manage all products (remove products)
+- View and update all orders (change order status)
+- See top-selling products
+- Full control over the platform
+
 ### Seller
 - Register as a seller
 - Add, edit, and remove products

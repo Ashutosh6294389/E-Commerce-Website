@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="admin-dashboard-container">
+    <div class="admin-dashboard-header">
+        <h1><i class="fas fa-tools"></i> Admin Panel</h1>
+        <span style="font-size:1.1rem;color:#888;">Welcome, {{ session['username'] }}</span>
+    </div>
+    <div class="admin-global-search-bar">
+        <input type="text" id="admin-global-search" class="admin-search-input" placeholder="Search users, products, or orders...">
+        <button class="btn" onclick="globalAdminSearch()"><i class="fas fa-search"></i> Search</button>
+    </div>
+    <div class="admin-dashboard-flex">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <ul>
+                <li><a href="#" class="sidebar-link active" onclick="showAdminSection('top-products-section', this)"><i class="fas fa-star"></i> Top Products</a></li>
+                <li><a href="#" class="sidebar-link" onclick="showAdminSection('users-section', this)"><i class="fas fa-users"></i> Users</a></li>
+                <li><a href="#" class="sidebar-link" onclick="showAdminSection('products-section', this)"><i class="fas fa-box"></i> Products</a></li>
+                <li><a href="#" class="sidebar-link" onclick="showAdminSection('orders-section', this)"><i class="fas fa-shopping-bag"></i> Orders</a></li>
+            </ul>
+        </aside>
+        <!-- Main Content -->
+        <div class="admin-main-content">
+            <div class="admin-analytics-cards">
+                <div class="admin-analytics-card">
+                    <span>Total Sales</span>
+                    <strong>${{ '%.2f' % total_sales }}</strong>
+                </div>
+                <div class="admin-analytics-card">
+                    <span>Total Users</span>
+                    <strong>{{ user_count }}</strong>
+                </div>
+                <div class="admin-analytics-card">
+                    <span>Total Products</span>
+                    <strong>{{ product_count }}</strong>
+                </div>
+                <div class="admin-analytics-card">
+                    <span>Total Orders</span>
+                    <strong>{{ order_count }}</strong>
+                </div>
+            </div>
+            <!-- Top Products Section -->
+<!-- Top Products Section -->
+<section id="top-products-section" class="admin-panel-section admin-section">
+    <h2>Top Products</h2>
+    <div class="admin-search-bar">
+        <input type="text" id="top-products-search" class="admin-search-input" placeholder="Search top products..." />
+        <button class="btn" onclick="filterTable('top-products-search', 'top-products-table')"><i class="fas fa-search"></i> Search</button>
+    </div>
+    <ul class="admin-top-products-list" id="top-products-table">
+        {% for name, sold in top_products %}
+        <li>{{ name }} <span style="color:#b12704;">(Sold: {{ sold }})</span></li>
+        {% endfor %}
+    </ul>
+</section>
+
+<!-- Users Section -->
+<section id="users-section" class="admin-panel-section admin-section" style="display:none;">
+    <h2>Users</h2>
+    <div class="admin-search-bar">
+        <input type="text" id="user-search" class="admin-search-input" placeholder="Search users by name, email, or role...">
+        <button class="btn" onclick="filterTable('user-search', 'users-table')"><i class="fas fa-search"></i> Search</button>
+    </div>
+    <table id="users-table">
+        <tr><th>ID</th><th>Email</th><th>Username</th><th>Role</th><th>Action</th></tr>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.role }}</td>
+            <td>
+                {% if user.role != 'admin' %}
+                <form method="POST" action="{{ url_for('deactivate_user', user_id=user.id) }}">
+                    <button type="submit" class="btn danger">Deactivate</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</section>
+
+<!-- Products Section -->
+<section id="products-section" class="admin-panel-section admin-section" style="display:none;">
+    <h2>Products</h2>
+    <div class="admin-search-bar">
+        <input type="text" id="product-search" class="admin-search-input" placeholder="Search products by name or category...">
+        <button class="btn" onclick="filterTable('product-search', 'products-table')"><i class="fas fa-search"></i> Search</button>
+    </div>
+    <table id="products-table">
+        <tr><th>ID</th><th>Name</th><th>Price</th><th>Category</th><th>Action</th></tr>
+        {% for product in products %}
+        <tr>
+            <td>{{ product.id }}</td>
+            <td>{{ product.name }}</td>
+            <td>${{ product.price }}</td>
+            <td>{{ product.category }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('admin_remove_product', product_id=product.id) }}">
+                    <button type="submit" class="btn danger">Remove</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</section>
+
+<!-- Orders Section -->
+<section id="orders-section" class="admin-panel-section admin-section" style="display:none;">
+    <h2>Orders</h2>
+    <div class="admin-search-bar">
+        <input type="text" id="order-search" class="admin-search-input" placeholder="Search orders by user, status, or date...">
+        <button class="btn" onclick="filterTable('order-search', 'orders-table')"><i class="fas fa-search"></i> Search</button>
+    </div>
+    <table id="orders-table">
+        <tr><th>ID</th><th>User</th><th>Total</th><th>Status</th><th>Date</th><th>Action</th></tr>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.user_id }}</td>
+            <td>${{ order.total }}</td>
+            <td>{{ order.status }}</td>
+            <td>{{ order.date.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('update_order_status', order_id=order.id) }}">
+                    <select name="status">
+                        <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>Pending</option>
+                        <option value="Shipped" {% if order.status == 'Shipped' %}selected{% endif %}>Shipped</option>
+                        <option value="Delivered" {% if order.status == 'Delivered' %}selected{% endif %}>Delivered</option>
+                        <option value="Cancelled" {% if order.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                    </select>
+                    <button type="submit" class="btn">Update</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</section>
+<script>
+function showAdminSection(sectionId, el) {
+    document.querySelectorAll('.admin-section').forEach(sec => sec.style.display = 'none');
+    document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
+    document.getElementById(sectionId).style.display = 'block';
+    if(el) el.classList.add('active');
+}
+document.addEventListener('DOMContentLoaded', function() {
+    showAdminSection('top-products-section', document.querySelector('.sidebar-link'));
+});
+</script>
+<script>
+function globalAdminSearch() {
+    // Find the visible section and its search input
+    const visibleSection = document.querySelector('.admin-section:not([style*="display: none"])');
+    if (!visibleSection) return;
+    const input = visibleSection.querySelector('.admin-search-input');
+    const globalInput = document.getElementById('admin-global-search');
+    if (input && globalInput) {
+        input.value = globalInput.value;
+        // Find the table or list in this section
+        const tableOrList = visibleSection.querySelector('table, ul');
+        if (tableOrList) {
+            filterTable(input.id, tableOrList.id);
+        }
+    }
+}
+</script>
+<script>
+function filterTable(inputId, tableId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById(tableId);
+    if (!table) return;
+    const trs = table.getElementsByTagName('tr');
+    for (let i = 1; i < trs.length; i++) { // skip header row
+        let rowText = trs[i].textContent.toLowerCase();
+        trs[i].style.display = rowText.includes(filter) ? '' : 'none';
+    }
+}
+</script>
+<style>
+.admin-global-search-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.admin-global-search-bar .admin-search-input {
+    width: 450px;
+    max-width: 90vw;
+    padding: 0.9rem 1.5rem;
+    font-size: 1.25rem;
+    border-radius: 8px;
+    border: 1.5px solid #bbb;
+    background: #fff;
+}
+
+.admin-global-search-bar .btn {
+    font-size: 1.15rem;
+    padding: 0.8rem 2.2rem;
+    border-radius: 8px;
+}
+body.dark-mode .admin-global-search-bar .admin-search-input {
+    background: #23272b;
+    color: #f0c14b;
+    border-color: #444;
+}
+</style>
+{% endblock %}

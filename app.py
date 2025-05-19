@@ -4,6 +4,7 @@ import os
 from werkzeug.utils import secure_filename
 from flask_migrate import Migrate
 from datetime import timedelta
+from sqlalchemy import func
 
 
 UPLOAD_FOLDER = 'static/uploads'
@@ -39,19 +40,7 @@ def cart():
     total = sum(item['price'] * item['quantity'] for item in cart_items)
     return render_template('cart.html', cart_items=cart_items, total=total)
 
-@app.route('/admin', methods=['GET', 'POST'])
-def admin():
-    if request.method == 'POST':
-        # Handle product creation
-        name = request.form['name']
-        price = request.form['price']
-        description = request.form['description']
-        new_product = Product(name=name, price=price, description=description)
-        db.session.add(new_product)
-        db.session.commit()
-        return redirect(url_for('admin'))
-    products = Product.query.all()
-    return render_template('admin.html', products=products)
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -64,7 +53,9 @@ def login():
             session['user_id'] = user.id
             session['role'] = user.role
             session['username'] = user.username
-            if user.role == 'seller':
+            if user.role == 'admin':
+                return redirect(url_for('admin_panel'))
+            elif user.role == 'seller':
                 return redirect(url_for('seller_dashboard'))
             elif user.role == 'consumer':
                 return redirect(url_for('consumer_dashboard'))
@@ -368,7 +359,78 @@ def buy_now(product_id):
     quantity = int(request.args.get('quantity', 1))
     return render_template('payment.html', product=product, quantity=quantity, buy_now=True)
 
+# Add an admin user if not present (run once or via migration)
+def create_admin():
+    if not User.query.filter_by(email='as6294389@gmail.com').first():
+        admin = User(email='as6294389@gmail.com', username='admin', password='admin123', role='admin')
+        db.session.add(admin)
+        db.session.commit()
+
+def is_admin():
+    return 'user_id' in session and User.query.get(session['user_id']).role == 'admin'
+
+@app.route('/admin', methods=['GET', 'POST'])
+def admin_panel():
+    if not is_admin():
+        flash("Admin access required.")
+        return redirect(url_for('login'))
+
+    users = User.query.all()
+    products = Product.query.all()
+    orders = Order.query.order_by(Order.date.desc()).all()
+    total_sales = db.session.query(func.sum(Order.total)).scalar() or 0
+    user_count = User.query.count()
+    product_count = Product.query.count()
+    order_count = Order.query.count()
+    top_products = db.session.query(
+        Product.name, func.sum(OrderItem.quantity).label('sold')
+    ).join(OrderItem, Product.id == OrderItem.product_id).group_by(Product.name).order_by(func.sum(OrderItem.quantity).desc()).limit(5).all()
+
+    return render_template(
+        'admin.html',
+        users=users,
+        products=products,
+        orders=orders,
+        total_sales=total_sales,
+        user_count=user_count,
+        product_count=product_count,
+        order_count=order_count,
+        top_products=top_products
+    )
+
+@app.route('/admin/deactivate_user/<int:user_id>', methods=['POST'])
+def deactivate_user(user_id):
+    if not is_admin():
+        return redirect(url_for('login'))
+    user = User.query.get_or_404(user_id)
+    db.session.delete(user)
+    db.session.commit()
+    flash("User account deactivated.")
+    return redirect(url_for('admin_panel'))
+
+@app.route('/admin/remove_product/<int:product_id>', methods=['POST'])
+def admin_remove_product(product_id):
+    if not is_admin():
+        return redirect(url_for('login'))
+    product = Product.query.get_or_404(product_id)
+    db.session.delete(product)
+    db.session.commit()
+    flash("Product removed.")
+    return redirect(url_for('admin_panel'))
+
+@app.route('/admin/update_order_status/<int:order_id>', methods=['POST'])
+def update_order_status(order_id):
+    if not is_admin():
+        return redirect(url_for('login'))
+    order = Order.query.get_or_404(order_id)
+    new_status = request.form['status']
+    order.status = new_status
+    db.session.commit()
+    flash("Order status updated.")
+    return redirect(url_for('admin_panel'))
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+        create_admin()
     app.run(debug=True)
