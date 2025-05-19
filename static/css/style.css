@@ -1138,3 +1138,96 @@ body.dark-mode .order-status-card {
     box-shadow: 0 2px 8px rgba(0,0,0,0.5) !important;
 }
 
+/* ...existing code... */
+
+/* Responsive styles for smaller screens */
+@media (max-width: 600px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0.5rem;
+    }
+    .logo {
+        font-size: 1.1rem;
+    }
+    nav a i, #dark-mode-icon {
+        font-size: 1.1rem !important;
+    }
+    .search-bar {
+        flex-direction: column;
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+    .search-bar input[type="text"] {
+        font-size: 0.9rem;
+        padding: 0.3rem;
+    }
+    .search-button {
+        width: 60px;
+        height: 32px;
+        font-size: 1rem;
+    }
+    .products-grid, .search-results-grid {
+        grid-template-columns: 1fr;
+        gap: 0.7rem;
+        padding: 0.5rem;
+    }
+    .product-card, .product-details-container, .dashboard-container {
+        padding: 0.7rem;
+        font-size: 0.95rem;
+    }
+    .main-display img, .image-selector img, .image-selector video {
+        max-width: 100%;
+        height: 60vw;
+        max-height: 180px;
+    }
+    .sidebar {
+        width: 100%;
+        border-radius: 5px 5px 0 0;
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+    }
+    .main-content {
+        padding: 1rem 0.3rem;
+    }
+    .profile-card img {
+        width: 60px;
+        height: 60px;
+    }
+    .edit-profile-container, .register-container, .login-container {
+        max-width: 98vw;
+        padding: 1rem;
+    }
+    table, th, td {
+        font-size: 0.9rem;
+    }
+    .btn, .btn.buy-now, .btn.view-details {
+        font-size: 0.95rem;
+        padding: 0.4rem 0.7rem;
+    }
+    footer {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+    }
+}
+
+/* For tablets */
+@media (max-width: 900px) {
+    .dashboard-container {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+        border-radius: 5px 5px 0 0;
+        margin-bottom: 1rem;
+    }
+    .main-content {
+        padding: 1rem;
+    }
+    .products-grid, .search-results-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+    .main-display img {
+        max-height: 220px;
+    }
+}
