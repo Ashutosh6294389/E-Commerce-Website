@@ -15,7 +15,7 @@ Spargen is a full-featured e-commerce web application built with Flask. It allow
 ## User Roles
 
 ### Admin
-- Access the admin dashboard
+- Access the admin dashboard(for admin there is a unique email id:as6294389@gmail.com and password:admin123)
 - View platform analytics (total sales, users, products, orders)
 - View and manage all users (deactivate accounts)
 - View and manage all products (remove products)

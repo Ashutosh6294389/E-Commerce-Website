@@ -5,11 +5,13 @@
     {% if products %}
     {% for product in products %}
     <div class="product-card">
-        <div class="product-image">
-            <img src="{{ url_for('static', filename=product.images.split(',')[0]) if product.images else url_for('static', filename='images/default-product.jpg') }}" alt="{{ product.name }}">
-        </div>
-        <div class="product-info">
+        <a href="{{ url_for('product', product_id=product.id) }}" style="text-decoration:none;color:inherit;">
+            <div class="product-image">
+                <img src="{{ url_for('static', filename=product.images.split(',')[0]) if product.images else url_for('static', filename='images/default-product.jpg') }}" alt="{{ product.name }}">
+            </div>
             <h2 class="product-name">{{ product.name }}</h2>
+        </a>
+        <div class="product-info">
             <p class="product-price">${{ product.price }}</p>
             <form method="POST" action="{{ url_for('add_to_cart', product_id=product.id) }}">
                 <button type="submit" class="btn">Add to Cart</button>
