@@ -92,7 +92,7 @@ migrations/
    python app.py
    ```
 
-6. **Open your browser and go to when  you see this link in terminal:**
+6. **Open your browser and go to the link when  you see this link in terminal:**
    ```
    http://127.0.0.1:5000/
    ```
