@@ -9,10 +9,11 @@
     <header>
     <div class="logo"><span style="color:#f0c14b;">E-Commerce</span> <span style="color:#232f3e;"></span></div>
     <!-- Add this after your logo div in the header -->
-    <div class="main-global-search-bar">
-        <input type="text" id="main-global-search" class="admin-search-input" placeholder="Search  products...">
+   <div class="main-global-search-bar" style="position:relative;">
+        <input type="text" id="main-global-search" class="admin-search-input" placeholder="Search  products..." autocomplete="off">
         <button class="btn" onclick="mainGlobalSearch()"><i class="fas fa-search"></i> Search</button>
-    </div>
+        <div id="search-suggestions" style="position:absolute;top:100%;left:0;width:100%;background:#fff;z-index:1000;border:1px solid #ddd;display:none;"></div>
+   </div>
     <nav>
         <button id="dark-mode-toggle" title="Toggle dark mode" style="background:none;border:none;cursor:pointer;color:inherit;font-size:1.5rem;">
            <i id="dark-mode-icon" class="fas fa-moon"></i>
@@ -39,6 +40,16 @@
             window.location.href = "{{ url_for('consumer_dashboard') }}";
         }
     }
+</script>
+<script>
+function mainGlobalSearch() {
+    const input = document.getElementById('main-global-search');
+    const query = input.value.trim();
+    if (query.length > 0) {
+        // Redirect to your search route (adjust if you use /dsa_search or /search)
+        window.location.href = `/dsa_search?query=${encodeURIComponent(query)}`;
+    }
+}
 </script>
 <script>
     // Dark mode toggle logic
@@ -98,18 +109,111 @@ body.dark-mode .main-global-search-bar .admin-search-input {
 }
 </style>
 <script>
-function mainGlobalSearch() {
-    const query = document.getElementById('main-global-search').value.trim();
-    if (query) {
-        // Redirect to /search?query=...
-        window.location.href = "{{ url_for('search') }}?query=" + encodeURIComponent(query);
+// filepath: templates/base.html
+const searchInput = document.getElementById('main-global-search');
+const suggestionsBox = document.getElementById('search-suggestions');
+let selectedSuggestionIndex = -1;
+let suggestions = [];
+
+searchInput.addEventListener('input', function() {
+    const query = this.value.trim();
+    selectedSuggestionIndex = -1;
+    if (query.length === 0) {
+        suggestionsBox.style.display = 'none';
+        suggestionsBox.innerHTML = '';
+        suggestions = [];
+        return;
     }
-}
-// Allow pressing Enter to trigger search
-document.getElementById('main-global-search').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-        e.preventDefault();
+    fetch(`/suggest?q=${encodeURIComponent(query)}`)
+        .then(res => res.json())
+        .then(data => {
+            suggestions = data;
+            if (data.length > 0) {
+                suggestionsBox.innerHTML = data.map((item, idx) =>
+                    `<div class="suggestion-item" data-index="${idx}" style="padding:0.5rem;cursor:pointer;">${item}</div>`
+                ).join('');
+                suggestionsBox.style.display = 'block';
+            } else {
+                suggestionsBox.style.display = 'none';
+                suggestionsBox.innerHTML = '';
+            }
+        });
+});
+
+// Keyboard navigation for suggestions
+searchInput.addEventListener('keydown', function(e) {
+    const items = suggestionsBox.querySelectorAll('.suggestion-item');
+    if (suggestionsBox.style.display === 'block' && items.length > 0) {
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            selectedSuggestionIndex = (selectedSuggestionIndex + 1) % items.length;
+            updateSuggestionHighlight(items);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            selectedSuggestionIndex = (selectedSuggestionIndex - 1 + items.length) % items.length;
+            updateSuggestionHighlight(items);
+        } else if (e.key === 'Enter') {
+            if (selectedSuggestionIndex >= 0 && selectedSuggestionIndex < items.length) {
+                e.preventDefault();
+                searchInput.value = items[selectedSuggestionIndex].textContent;
+                suggestionsBox.style.display = 'none';
+                mainGlobalSearch();
+            } else {
+                // No suggestion selected, just search
+                mainGlobalSearch();
+            }
+        }
+    } else if (e.key === 'Enter') {
         mainGlobalSearch();
     }
 });
+
+function updateSuggestionHighlight(items) {
+    items.forEach((item, idx) => {
+        if (idx === selectedSuggestionIndex) {
+            item.style.background = '#f0c14b';
+            item.style.color = '#232f3e';
+        } else {
+            item.style.background = '';
+            item.style.color = '';
+        }
+    });
+}
+
+suggestionsBox.addEventListener('mousedown', function(e) {
+    if (e.target.classList.contains('suggestion-item')) {
+        searchInput.value = e.target.textContent;
+        suggestionsBox.style.display = 'none';
+        mainGlobalSearch();
+    }
+});
+
+document.addEventListener('click', function(e) {
+    if (!suggestionsBox.contains(e.target) && e.target !== searchInput) {
+        suggestionsBox.style.display = 'none';
+    }
+});
 </script>
+<style>
+.suggestion-item {
+    background: #fff;
+    color: #232f3e;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+.suggestion-item:hover {
+    background: #f0c14b;
+    color: #232f3e;
+}
+
+/* Dark mode */
+body.dark-mode .suggestion-item {
+    background: #23272b;
+    color: #f0c14b;
+}
+body.dark-mode .suggestion-item:hover {
+    background: #444;
+    color: #fff;
+}
+</style>

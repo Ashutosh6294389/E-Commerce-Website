@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, g
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from models import Product, User, db, Order, OrderItem
-import os
+import os, subprocess
 from werkzeug.utils import secure_filename
 from flask_migrate import Migrate
 from datetime import timedelta
@@ -428,6 +428,24 @@ def update_order_status(order_id):
     db.session.commit()
     flash("Order status updated.")
     return redirect(url_for('admin_panel'))
+
+@app.route('/dsa_search')
+def dsa_search():
+    query = request.args.get('query', '').strip()
+    products = []
+    if query:
+        products = Product.query.filter(Product.name.ilike(f'%{query}%')).all()
+    return render_template('search_results.html', products=products, query=query)
+
+@app.route('/suggest', methods=['GET'])
+def suggest():
+    query = request.args.get('q', '').strip()
+    suggestions = []
+    if query:
+        # Get up to 5 product names that closely match the query
+        products = Product.query.filter(Product.name.ilike(f'%{query}%')).limit(5).all()
+        suggestions = [p.name for p in products]
+    return jsonify(suggestions)
 
 if __name__ == '__main__':
     with app.app_context():
